@@ -5,27 +5,33 @@ import (
 	"fmt"
 	"github.com/coreos/go-semver/semver"
 	gogithub "github.com/google/go-github/v50/github"
+	"log"
+	"os"
+	"path/filepath"
 )
 
 type Github interface {
-	CreateNewTag(owner, repo, sha, releaseTag, preReleaseTag string) (string, error)
-	CreateRelease(tag, preReleaseTag string) error
+	CreateNewTag(sha, releaseTag, preReleaseTag string) (string, error)
+	CreateRelease(tag, preReleaseTag string) (int64, error)
+	UploadReleaseAssets(releaseID int64, files []string) error
 }
 type github struct {
-	client *gogithub.Client
-	ctx    context.Context
-	owner  string
-	repo   string
+	client   *gogithub.Client
+	ctx      context.Context
+	owner    string
+	repo     string
+	repoRoot string
 }
 
-func New(githubToken, owner, repo string) *github {
+func New(githubToken, owner, repo, repoRoot string) Github {
 	ctx := context.Background()
 	client := gogithub.NewTokenClient(ctx, githubToken)
 	return &github{
-		ctx:    ctx,
-		client: client,
-		owner:  owner,
-		repo:   repo,
+		ctx:      ctx,
+		client:   client,
+		owner:    owner,
+		repo:     repo,
+		repoRoot: repoRoot,
 	}
 }
 
@@ -118,12 +124,12 @@ func (g *github) getLatestTag() (string, error) {
 }
 
 // CreateRelease creates a new release in the repository or returns an error
-func (g *github) CreateRelease(tag, preReleaseTag string) error {
+func (g *github) CreateRelease(tag, preReleaseTag string) (int64, error) {
 	preRelease := false
 	if preReleaseTag != "" {
 		preRelease = true
 	}
-	_, _, err := g.client.Repositories.CreateRelease(g.ctx, g.owner, g.repo, &gogithub.RepositoryRelease{
+	release, _, err := g.client.Repositories.CreateRelease(g.ctx, g.owner, g.repo, &gogithub.RepositoryRelease{
 		TagName:    &tag,
 		Name:       &tag,
 		Body:       gogithub.String(""),
@@ -131,7 +137,26 @@ func (g *github) CreateRelease(tag, preReleaseTag string) error {
 		Prerelease: gogithub.Bool(preRelease),
 	})
 	if err != nil {
-		return err
+		return 0, err
+	}
+	return *release.ID, nil
+}
+
+// UploadReleaseAssets uploads a release asset to the repository or returns an error
+func (g *github) UploadReleaseAssets(releaseID int64, files []string) error {
+	for _, filePath := range files {
+		fp := filepath.Join(g.repoRoot, filePath)
+		log.Println("Uploading file: ", fp)
+		file, err := os.Open(fp)
+		if err != nil {
+			return err
+		}
+		_, _, err = g.client.Repositories.UploadReleaseAsset(g.ctx, g.owner, g.repo, releaseID, &gogithub.UploadOptions{
+			Name: filepath.Base(fp),
+		}, file)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }

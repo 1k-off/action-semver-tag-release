@@ -1,0 +1,35 @@
+name: "Semver tag and release"
+description: "Creates a tag based on the semver of previous tag and optional creates a release with assets."
+inputs:
+  version:
+    description: "Version of the action"
+    required: true
+  github_token:
+    description: "Github token"
+    required: true
+  release_tag:
+    description: "Release tag"
+    required: false
+    default: "patch"
+  pre_release_tag:
+    description: "Pre-release tag"
+    required: false
+    default: ""
+  create_release:
+    description: "Should we create release after tag creation?"
+    required: false
+    default: "false"
+  assets:
+    description: "Assets to upload to release. Will not work if create_release is false. Must be relative paths to the root of the repository."
+    required: false
+outputs:
+  tag:
+    description: "Created tag"
+  semver-tag-release-path:
+    description: "Path to the binary"
+branding:
+  icon: "tag"
+  color: "gray-dark"
+runs:
+  using: "node16"
+  main: "action/index.js"

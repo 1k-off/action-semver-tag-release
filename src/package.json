@@ -1,0 +1,41 @@
+{
+  "name": "action-semver-tag-release",
+  "version": "1.0.0",
+  "description": "",
+  "main": "action/index.js",
+  "scripts": {
+    "build": "ncc build run.ts -o ../action",
+    "format": "prettier --write .",
+    "format-check": "prettier --check ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1k-off/action-semver-tag-release.git"
+  },
+  "keywords": [
+    "actions",
+    "node",
+    "go",
+    "versioning",
+    "tag",
+    "release",
+    "semver"
+  ],
+  "author": "1k-off",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/1k-off/action-semver-tag-release/issues"
+  },
+  "homepage": "https://github.com/1k-off/action-semver-tag-release#readme",
+  "dependencies": {
+    "@actions/core": "^1.10.0",
+    "@actions/github": "^5.1.1",
+    "@actions/tool-cache": "^2.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.14.0",
+    "@vercel/ncc": "^0.36.1",
+    "prettier": "^2.8.4",
+    "typescript": "^4.9.5"
+  }
+}
