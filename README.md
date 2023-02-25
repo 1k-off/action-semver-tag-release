@@ -33,7 +33,7 @@ This action creates a tag based on the previous tags and increments version. It 
 ## Example usage
 1. Create tag and release with patch version increment
 ```yaml
-      - uses: 1k-off/test-repo@latest
+      - uses: 1k-off/action-semver-tag-release@latest
         id: tag
         with:
           version: latest
@@ -47,7 +47,7 @@ This action creates a tag based on the previous tags and increments version. It 
 ```
 2. Only create tag
 ```yaml
-      - uses: 1k-off/test-repo@latest
+      - uses: 1k-off/action-semver-tag-release@latest
         id: tag
         with:
           version: latest
@@ -55,7 +55,7 @@ This action creates a tag based on the previous tags and increments version. It 
 ```
 3. Create tag and pre-release with minor version increment
 ```yaml
-      - uses: 1k-off/test-repo@latest
+      - uses: 1k-off/action-semver-tag-release@latest
         id: tag
         with:
           version: latest
