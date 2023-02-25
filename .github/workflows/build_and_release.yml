@@ -84,12 +84,15 @@ jobs:
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v3
-      - run: chmod +x semver-tag-release-linux-amd64/semver-tag-release-linux-amd64
-      - run: ./semver-tag-release-linux-amd64/semver-tag-release-linux-amd64
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CREATE_RELEASE: true
-          ASSETS: |
+      - uses: 1k-off/action-semver-tag-release@1.0.1
+        id: tag
+        with:
+          version: latest
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          release_tag: patch
+          pre_release_tag: ""
+          create_release: true
+          assets: |
             semver-tag-release-linux-amd64/semver-tag-release-linux-amd64
             semver-tag-release-linux-arm64/semver-tag-release-linux-arm64
             semver-tag-release-darwin-amd64/semver-tag-release-darwin-amd64
