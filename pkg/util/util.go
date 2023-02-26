@@ -1,6 +1,7 @@
 package util
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -19,11 +20,7 @@ func GetEnvBool(key string) (bool, error) {
 }
 
 func SetGithubOutput(key, value string) {
-	output := os.Getenv("GITHUB_OUTPUT")
-	newString := key + "=" + value
-	output += newString
-
-	_ = os.Setenv("GITHUB_OUTPUT", output)
+	fmt.Printf(`::set-output name=%s::%s`, key, value)
 }
 
 // GetEnvArray returns an array of strings from the environment variable
